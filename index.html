@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>우리동네 문제해결</title>
+<meta name="description" content="문제를 메뉴로 고르고 주문하면 지원자가 배달돼요 — 우아한청년들 FDO 커리어프로그램 1기 지원용 포트폴리오">
+<meta property="og:title" content="우리동네 문제해결 — 오늘의 주문">
+<meta property="og:description" content="데이터로 원인을 찾고 끝까지 고치는 지원자의 포트폴리오. 메뉴를 담고 주문해 보세요.">
+<meta name="theme-color" content="#2ac1bc">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Jua&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+:root{
+  --mint:#2ac1bc; --mint-d:#0e8f8a; --mint-l:#e6f8f7;
+  --ink:#222; --sub:#777; --faint:#aaa; --line:#eeeeee; --bg:#f2f4f5; --card:#fff;
+  --red:#ff5a5a; --yellow:#ffcf3f;
+  --art-ink:#4a2c3a;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,"Apple SD Gothic Neo",system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+a{color:inherit}
+.dh{font-family:"Do Hyeon",sans-serif;font-weight:400}
+.jua{font-family:"Jua",sans-serif;font-weight:400}
+.app{max-width:460px;margin:0 auto;min-height:100dvh;background:var(--card);position:relative;box-shadow:0 0 40px rgba(0,0,0,.06);padding-bottom:96px}
+.view{display:none}.view.on{display:block}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:8px;height:52px;padding:0 8px;background:var(--mint);color:#fff;transition:background .2s,color .2s}
+.topbar.solid{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
+.topbar .t{flex:1;font-family:"Do Hyeon";font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transition:opacity .2s}
+.topbar.solid .t{opacity:1}
+.ibtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center}
+.ibtn svg{width:24px;height:24px}
+.ibtn:active{background:rgba(0,0,0,.08)}
+.heart.on svg path{fill:var(--red);stroke:var(--red)}
+
+/* ---------- store hero ---------- */
+.hero{background:var(--mint);color:#fff;padding:4px 20px 92px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;left:-10%;right:-10%;bottom:-40px;height:80px;background:#fff;border-radius:50% 50% 0 0}
+.addr{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:600;opacity:.95}
+.hero h1{font-family:"Do Hyeon";font-weight:400;font-size:34px;line-height:1.1;margin:14px 0 6px}
+.hero p{margin:0;font-size:14px;opacity:.92;line-height:1.5}
+.hero .scoot{position:absolute;right:14px;top:34px;width:92px;animation:ride 2.4s ease-in-out infinite}
+@keyframes ride{50%{transform:translate(-6px,-3px) rotate(-2deg)}}
+.storecard{position:relative;z-index:2;margin:-50px 16px 0;background:#fff;border-radius:18px;box-shadow:0 6px 24px rgba(0,0,0,.08);padding:18px 18px 14px;text-align:center}
+.logo{width:66px;height:66px;border-radius:50%;background:#ffe6ef;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12);margin:-52px auto 6px;overflow:hidden}
+.storecard h2{font-family:"Do Hyeon";font-weight:400;font-size:24px;margin:0}
+.storecard .tags{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+.chip{font-size:12px;font-weight:600;color:var(--mint-d);background:var(--mint-l);border-radius:6px;padding:3px 7px}
+.chip.gray{color:var(--sub);background:#f3f3f3}
+.storebtns{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin:0 -18px -14px}
+.storebtns a,.storebtns button{display:flex;align-items:center;justify-content:center;gap:6px;height:46px;font-size:14px;font-weight:600;text-decoration:none}
+.storebtns > *+*{border-left:1px solid var(--line)}
+
+.info{margin:18px 16px 0;font-size:14px}
+.info dl{display:grid;grid-template-columns:96px 1fr;gap:9px 10px;margin:0}
+.info dt{color:var(--sub)}
+.info dd{margin:0;font-weight:500;line-height:1.45}
+.notice{margin:16px 16px 0;background:#f7f8f9;border-radius:12px;padding:14px;font-size:14px;line-height:1.6}
+.notice b{color:var(--mint-d)}
+.notice .k{font-family:"Do Hyeon";font-size:16px;display:block;margin-bottom:4px}
+
+/* ---------- tabs ---------- */
+.tabs{position:sticky;top:52px;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:0 10px;margin-top:20px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;height:46px;padding:0 12px;font-size:15px;font-weight:600;color:var(--faint);border-bottom:3px solid transparent}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* ---------- menu ---------- */
+.sec{padding:22px 16px 6px;scroll-margin-top:100px}
+.sec h3{font-family:"Do Hyeon";font-weight:400;font-size:21px;margin:0 0 2px}
+.sec .desc{font-size:13px;color:var(--sub);margin:0 0 6px}
+.set{margin:18px 16px 0;border-radius:16px;background:linear-gradient(135deg,#2ac1bc,#20a9c4);color:#fff;padding:18px;display:flex;gap:14px;align-items:center;scroll-margin-top:100px}
+.set .em{font-size:44px;line-height:1}
+.set h4{margin:0;font-family:"Do Hyeon";font-weight:400;font-size:21px}
+.set p{margin:3px 0 10px;font-size:13px;opacity:.95;line-height:1.45}
+.set button{background:#fff;color:var(--mint-d);border-radius:10px;padding:8px 14px;font-weight:700;font-size:14px}
+.item{display:flex;gap:14px;align-items:center;width:100%;text-align:left;padding:16px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .txt{flex:1;min-width:0}
+.item .nm{display:flex;align-items:center;gap:6px;font-size:17px;font-weight:700}
+.badge{font-size:11px;font-weight:700;color:#fff;background:var(--red);border-radius:4px;padding:2px 5px}
+.badge.m{background:var(--mint)}
+.item .ds{font-size:13px;color:var(--sub);margin:4px 0 6px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item .pr{font-size:16px;font-weight:800}
+.item .pr small{font-size:12px;font-weight:500;color:var(--sub);margin-left:4px}
+.thumb{position:relative;flex:none;width:100px;height:100px;border-radius:14px;overflow:hidden;display:grid;place-items:center}
+.thumb svg{width:80%;height:80%;overflow:hidden}
+.thumb .incart{position:absolute;right:6px;top:6px;width:22px;height:22px;border-radius:50%;background:var(--mint);color:#fff;font-size:13px;font-weight:800;display:none;place-items:center;box-shadow:0 0 0 2px #fff}
+.item.added .incart{display:grid}
+
+/* ---------- cart bar ---------- */
+.cartbar{position:fixed;left:50%;bottom:0;transform:translate(-50%,120%);width:min(460px,100%);padding:10px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,#fff 30%);z-index:40;transition:transform .25s}
+.cartbar.show{transform:translate(-50%,0)}
+.cartbar button{width:100%;height:56px;border-radius:12px;background:var(--mint);color:#fff;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 16px rgba(42,193,188,.35)}
+.cartbar .n{min-width:24px;height:24px;border-radius:12px;background:#fff;color:var(--mint-d);font-size:14px;display:grid;place-items:center;padding:0 6px}
+.bump{animation:bump .3s}
+@keyframes bump{50%{transform:scale(1.04)}}
+
+/* ---------- bottom sheet ---------- */
+.dim{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center}
+.dim.on{display:flex}
+.sheet{width:min(460px,100%);max-height:92dvh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(100%)}}
+.sheet .pic{height:200px;display:grid;place-items:center;position:relative;overflow:hidden}
+.sheet .pic svg{height:150px;width:auto;max-width:70%;overflow:visible}
+.sheet .x{position:absolute;right:12px;top:12px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;font-size:20px}
+.sheet .body{padding:20px 20px 0}
+.sheet .tag{display:inline-block;font-size:12px;font-weight:700;color:var(--mint-d);background:var(--mint-l);border-radius:6px;padding:4px 8px;margin-bottom:10px}
+.sheet h2{font-family:"Do Hyeon";font-weight:400;font-size:28px;margin:0}
+.sheet .sub{font-size:15px;margin:4px 0 2px;font-weight:600}
+.sheet .meta{font-size:12.5px;color:var(--sub);margin:0 0 14px}
+.opt{border-top:8px solid #f4f5f7;margin:16px -20px 0;padding:18px 20px 0}
+.opt h4{margin:0 0 10px;font-size:16px;display:flex;justify-content:space-between;align-items:center}
+.opt h4 small{font-size:11px;font-weight:700;color:var(--mint-d);background:var(--mint-l);border-radius:4px;padding:2px 6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-family:"Do Hyeon";font-weight:400;font-size:22px;color:var(--mint-d)}
+.stat span{font-size:12px;color:var(--sub)}
+.opt p{margin:0;line-height:1.65;font-size:14.5px}
+.opt ul{margin:0;padding:0;list-style:none}
+.opt li{position:relative;padding:9px 0 9px 26px;font-size:14px;line-height:1.55;border-bottom:1px solid #f3f3f3}
+.opt li:last-child{border-bottom:0}
+.opt li:before{content:"";position:absolute;left:2px;top:13px;width:14px;height:14px;border-radius:50%;border:2px solid var(--mint);background:radial-gradient(var(--mint) 0 3px,transparent 3.5px)}
+.note{font-size:11.5px;color:var(--sub);margin:8px 0 0}
+.sheet .foot{position:sticky;bottom:0;background:#fff;padding:14px 20px calc(14px + env(safe-area-inset-bottom));display:flex;gap:10px;border-top:1px solid var(--line);margin-top:18px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:52px;padding:0 16px;border-radius:12px;font-weight:700;font-size:16px;text-decoration:none}
+.btn.line{border:1px solid #ddd;background:#fff}
+.btn.fill{flex:1;background:var(--mint);color:#fff}
+.btn.fill:disabled{background:#cfd8d8}
+
+/* ---------- tracking ---------- */
+.track{padding:20px 16px}
+.eta{text-align:center;margin:6px 0 16px}
+.eta small{display:block;font-size:14px;color:var(--sub)}
+.eta b{font-family:"Do Hyeon";font-weight:400;font-size:30px}
+.map{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#eef6f3}
+.map svg{display:block;width:100%;height:auto}
+.steps{list-style:none;margin:18px 0 0;padding:0}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:10px 0;color:var(--faint);position:relative}
+.steps li:not(:last-child):after{content:"";position:absolute;left:13px;top:36px;bottom:-8px;width:2px;background:var(--line)}
+.steps .dot{width:28px;height:28px;border-radius:50%;border:2px solid #ddd;background:#fff;display:grid;place-items:center;font-size:14px;font-weight:800;z-index:1}
+.steps b{display:block;font-size:16px}
+.steps span{font-size:13px}
+.steps li.done,.steps li.now{color:var(--ink)}
+.steps li.done .dot{background:var(--mint);border-color:var(--mint);color:#fff}
+.steps li.now .dot{border-color:var(--mint);color:var(--mint-d);animation:pulse 1s infinite}
+.steps li.done:not(:last-child):after{background:var(--mint)}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(42,193,188,.2)}}
+.skipline{display:block;margin:12px auto 0;font-size:13px;color:var(--sub);text-decoration:underline}
+
+/* ---------- done ---------- */
+.done{padding:26px 16px 10px}
+.done-head{text-align:center}
+.check{width:78px;height:78px;border-radius:50%;background:var(--mint);margin:0 auto 12px;display:grid;place-items:center;animation:popin .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes popin{from{transform:scale(0)}}
+.done h2{font-family:"Do Hyeon";font-weight:400;font-size:30px;margin:0}
+.done-head p{margin:6px 0 0;color:var(--sub);font-size:14.5px;line-height:1.55}
+.receipt{margin:22px 4px 0;background:#fff;border:1px solid var(--line);border-radius:6px;padding:20px 18px;position:relative;box-shadow:0 4px 16px rgba(0,0,0,.05);
+  -webkit-mask:radial-gradient(circle 7px at 50% 0,transparent 98%,#000) 0 0/18px 51% repeat-x,radial-gradient(circle 7px at 50% 100%,transparent 98%,#000) 0 100%/18px 51% repeat-x;
+          mask:radial-gradient(circle 7px at 50% 0,transparent 98%,#000) 0 0/18px 51% repeat-x,radial-gradient(circle 7px at 50% 100%,transparent 98%,#000) 0 100%/18px 51% repeat-x}
+.receipt .rh{text-align:center;border-bottom:1px dashed #ccc;padding-bottom:12px;margin-bottom:6px}
+.receipt .rh b{font-family:"Do Hyeon";font-weight:400;font-size:21px;display:block}
+.receipt .rh span{font-size:12px;color:var(--sub);font-family:ui-monospace,Menlo,monospace}
+.rl{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 0;border-bottom:1px dotted #e3e3e3;font-size:14px}
+.rl .c{grid-column:1/-1;font-size:12.5px;color:var(--mint-d);font-weight:600}
+.rl .p{font-weight:800;white-space:nowrap}
+.rtotal{display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;margin-top:4px;border-top:2px solid var(--ink)}
+.rtotal b{font-family:"Do Hyeon";font-weight:400;font-size:22px;color:var(--mint-d)}
+.rfoot{margin-top:12px;font-size:12px;color:var(--sub);line-height:1.6;text-align:center}
+.cta{margin:22px 0 0;display:grid;gap:10px}
+.cta .big{height:64px;border-radius:14px;background:var(--mint);color:#fff;text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(42,193,188,.35)}
+.cta .big b{font-size:17px}
+.cta .big span{font-size:13px;opacity:.95;font-family:ui-monospace,Menlo,monospace}
+.cta .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.more{margin-top:18px}
+.more h4{font-size:15px;margin:0 0 6px}
+.more .item{padding:10px 0}
+.more .thumb{width:56px;height:56px;border-radius:10px}
+.more .nm{font-size:15px}
+.more .ds{margin:2px 0 0}
+
+.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);background:rgba(30,30,30,.92);color:#fff;font-size:14px;padding:10px 16px;border-radius:999px;opacity:0;transition:.25s;z-index:80;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (min-width:600px){
+  body{background:var(--mint-l);background-image:radial-gradient(#cdeeed 1.5px,transparent 1.5px);background-size:22px 22px}
+  .app{margin:24px auto;min-height:calc(100dvh - 48px);border-radius:28px;overflow:hidden}
+  .topbar{border-radius:28px 28px 0 0}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><g id="headArt">
+          <path d="M13 50Q12 12 45 11Q78 12 77 50L77 70Q70 75 63 66L63 44Q45 38 27 44L27 66Q20 75 13 70Z" fill="#3b2530" stroke="#4a2c3a" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="45" cy="46" r="27" fill="#ffe2cf" stroke="#4a2c3a" stroke-width="3"/>
+          <path d="M18 42Q21 15 45 14Q69 15 72 42Q61 31 51 36Q45 27 37 36Q27 31 18 42Z" fill="#3b2530"/>
+          <g class="eyes"><ellipse cx="35" cy="50" rx="4" ry="5.5" fill="#3b2530"/><ellipse cx="55" cy="50" rx="4" ry="5.5" fill="#3b2530"/>
+          <circle cx="36.5" cy="48" r="1.6" fill="#fff"/><circle cx="56.5" cy="48" r="1.6" fill="#fff"/></g>
+          <ellipse cx="28" cy="59" rx="5" ry="3" fill="#ff9ebb" opacity=".8"/><ellipse cx="62" cy="59" rx="5" ry="3" fill="#ff9ebb" opacity=".8"/>
+          <path d="M40 61q5 5 10 0" fill="none" stroke="#4a2c3a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M66 20l3 6 6 1-4.5 4 1 6-5.5-3-5.5 3 1-6-4.5-4 6-1z" fill="#ffcf3f" stroke="#4a2c3a" stroke-width="2" stroke-linejoin="round"/>
+        </g>
+      </defs></svg>
+
+<div class="app">
+  <header class="topbar" id="topbar">
+    <button class="ibtn" id="backBtn" aria-label="뒤로" style="visibility:hidden"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <span class="t" id="topTitle">우리동네 문제해결</span>
+    <button class="ibtn heart" id="heartBtn" aria-label="찜하기" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>
+    <button class="ibtn" id="shareBtn" aria-label="링크 복사"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg></button>
+  </header>
+
+  <!-- ================= STORE ================= -->
+  <main class="view on" id="v-store">
+    <section class="hero">
+      <span class="addr">📍 우아한청년들 FDO 커리어프로그램 1기 ▾</span>
+      <h1>문제 있으세요?<br>바로 배달해 드려요</h1>
+      <p>데이터로 원인을 찾고, 현장에서 끝까지 고치는 가게</p>
+      <svg class="scoot" viewBox="0 0 120 90" aria-hidden="true">
+        <rect x="6" y="18" width="40" height="34" rx="6" fill="#fff" stroke="#0b6f6b" stroke-width="3"/>
+        <text x="26" y="41" text-anchor="middle" font-family="Do Hyeon" font-size="15" fill="#0e8f8a">FDO</text>
+        <path d="M30 70h46l10-22h-14" fill="none" stroke="#0b6f6b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M54 52l12 18" stroke="#0b6f6b" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="72" cy="22" r="12" fill="#ffe2cf" stroke="#0b6f6b" stroke-width="3"/>
+        <path d="M60 22a12 12 0 0 1 24 0z" fill="#fff" stroke="#0b6f6b" stroke-width="3"/>
+        <circle cx="30" cy="74" r="10" fill="#0b6f6b"/><circle cx="30" cy="74" r="4" fill="#fff"/>
+        <circle cx="92" cy="74" r="10" fill="#0b6f6b"/><circle cx="92" cy="74" r="4" fill="#fff"/>
+        <path d="M100 40h14M104 50h12M98 60h10" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+      </svg>
+    </section>
+
+    <section class="storecard">
+      <div class="logo"><svg viewBox="10 8 70 70" width="66" height="66" aria-hidden="true"><use href="#headArt"/></svg></div>
+      <h2>우리동네 문제해결</h2>
+      <div class="tags"><span class="chip">#데이터</span><span class="chip">#AI</span><span class="chip">#문제해결</span><span class="chip gray">사장님 직접 배달</span></div>
+      <div class="storebtns">
+        <a href="https://profile.chelina.dev/" target="_blank" rel="noopener">📂 포트폴리오</a>
+        <a href="https://github.com/shashax42" target="_blank" rel="noopener">💻 GitHub</a>
+        <button id="shareBtn2">🔗 공유</button>
+      </div>
+    </section>
+
+    <section class="info">
+      <dl>
+        <dt>최소주문</dt><dd>문제 1개부터</dd>
+        <dt>배달팁</dt><dd>0원</dd>
+        <dt>배달시간</dt><dd>4시간 → 30분 <span style="color:var(--sub);font-weight:400">(Cloud2Scape 실측)</span></dd>
+        <dt>원산지</dt><dd>한국공학대 컴퓨터공학 · AWS Cloud School · SeSAC Hybrid Cloud DataOps</dd>
+        <dt>가게 인증</dt><dd>🏆 AWS Cloud School Best Project · HESH 4th · AZ-900 · SC-900</dd>
+      </dl>
+    </section>
+
+    <section class="notice">
+      <span class="k">📢 사장님 알림</span>
+      저는 <b>‘왜 이 과정을 사람이 매번 반복해야 하지?’</b>부터 묻는 사람이에요.
+      AI 분석 초안도 그대로 믿지 않고 원자료와 대조해서 판단해요.
+      고친 결과는 <b>‘다른 사람이 다시 해도 같은 결과가 나오는가’</b>로 확인합니다.
+    </section>
+
+    <nav class="tabs" id="tabs" aria-label="메뉴 카테고리"></nav>
+
+    <section class="set" id="sec-set">
+      <div class="em" aria-hidden="true">🍱</div>
+      <div>
+        <h4>FDO 풀코스 세트 (<span id="setN">8</span>종)</h4>
+        <p>분석 · 진단 · 조율 · 실행 메뉴 + 사이드 2종<br>바쁘시면 이걸로 한 번에 주문하세요</p>
+        <button id="setBtn">세트 전부 담기</button>
+      </div>
+    </section>
+    <div id="menu"></div>
+  </main>
+
+  <!-- ================= TRACKING ================= -->
+  <main class="view" id="v-track">
+    <div class="track">
+      <div class="eta"><small id="etaSub">주문이 접수됐어요</small><b id="etaMain">곧 도착해요</b></div>
+      <div class="map">
+        <svg viewBox="0 0 360 230" aria-label="배달 경로 지도">
+          <rect width="360" height="230" fill="#eef6f3"/>
+          <g fill="#dcefe9"><rect x="14" y="14" width="96" height="62" rx="8"/><rect x="134" y="14" width="90" height="62" rx="8"/><rect x="248" y="14" width="98" height="62" rx="8"/>
+            <rect x="14" y="100" width="96" height="50" rx="8"/><rect x="248" y="100" width="98" height="50" rx="8"/>
+            <rect x="14" y="174" width="96" height="42" rx="8"/><rect x="134" y="174" width="90" height="42" rx="8"/><rect x="248" y="174" width="98" height="42" rx="8"/></g>
+          <rect x="134" y="100" width="90" height="50" rx="8" fill="#cdeccb"/>
+          <text x="179" y="130" text-anchor="middle" font-family="Do Hyeon" font-size="13" fill="#6aa36a">공원</text>
+          <path d="M0 88H360M0 162H360M122 0V230M236 0V230" stroke="#fff" stroke-width="12"/>
+          <path id="route" d="M60 162H122V88H236V40H300" fill="none" stroke="#2ac1bc" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 9"/>
+          <g transform="translate(60 162)"><circle r="16" fill="#fff" stroke="#2ac1bc" stroke-width="3"/><text y="5" text-anchor="middle" font-size="15">🏠</text></g>
+          <text x="60" y="196" text-anchor="middle" font-family="Do Hyeon" font-size="13" fill="#0e8f8a">우리 가게</text>
+          <g transform="translate(300 40)"><path d="M0 0c-10-14-15-20-15-27a15 15 0 1 1 30 0c0 7-5 13-15 27z" transform="translate(0 14)" fill="#ff5a5a" stroke="#fff" stroke-width="2"/><circle cy="-13" r="5" fill="#fff"/></g>
+          <text x="300" y="72" text-anchor="middle" font-family="Do Hyeon" font-size="13" fill="#d64545">FDO팀</text>
+          <g id="rider"><circle r="15" fill="#2ac1bc" stroke="#fff" stroke-width="3"/><text y="5" text-anchor="middle" font-size="15">🛵</text></g>
+        </svg>
+      </div>
+      <ol class="steps" id="steps">
+        <li><span class="dot">1</span><div><b>주문 접수</b><span>가게에서 주문을 확인했어요</span></div></li>
+        <li><span class="dot">2</span><div><b>근거 확인 중</b><span>AI 분석 초안을 원자료와 대조하고 있어요</span></div></li>
+        <li><span class="dot">3</span><div><b>배달 출발</b><span>라이더가 담당 권역으로 출발했어요</span></div></li>
+        <li><span class="dot">4</span><div><b>배달 완료</b><span>문 앞에 지원자를 두고 갈게요</span></div></li>
+      </ol>
+      <button class="skipline" id="skipTrack">바로 받아보기 →</button>
+    </div>
+  </main>
+
+  <!-- ================= DONE ================= -->
+  <main class="view" id="v-done">
+    <div class="done">
+      <div class="done-head">
+        <div class="check"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h2>배달 완료!</h2>
+        <p>주문하신 <b id="doneCount">0</b>개 메뉴와 함께<br><b>지원자</b>가 FDO팀에 도착했어요 🛵</p>
+      </div>
+      <div class="receipt">
+        <div class="rh"><b>우리동네 문제해결</b><span id="orderNo">주문번호 FDO-1-001</span></div>
+        <div id="rlines"></div>
+        <div class="rtotal"><span>합계</span><b>첫 번째 FDO 후보 1명</b></div>
+        <div class="rfoot">결제수단: 데이터 · AI · 현장 확인<br>요청사항: “감보다 근거로, 결과는 다시 검증해 주세요”</div>
+      </div>
+      <div class="cta">
+        <a class="big" href="https://profile.chelina.dev/" target="_blank" rel="noopener"><b>포트폴리오 전체 보기</b><span>profile.chelina.dev</span></a>
+        <div class="row">
+          <a class="btn line" href="https://github.com/shashax42" target="_blank" rel="noopener">💻 GitHub</a>
+          <button class="btn line" id="againBtn">🍽️ 메뉴 더 보기</button>
+        </div>
+      </div>
+      <div class="more" id="more"></div>
+    </div>
+  </main>
+
+  <div class="cartbar" id="cartbar"><button id="orderBtn"><span class="n" id="cartN">0</span><span id="orderTxt">주문하기</span></button></div>
+</div>
+
+<div class="dim" id="dim" role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="sheet" id="sheet">
+    <div class="pic" id="sPic"><button class="x" id="sClose" aria-label="닫기">×</button></div>
+    <div class="body">
+      <span class="tag" id="sTag"></span>
+      <h2 id="sTitle"></h2>
+      <p class="sub" id="sSub"></p>
+      <p class="meta" id="sMeta"></p>
+      <div class="opt"><h4>핵심 지표 <small>실측</small></h4><div class="stats" id="sStats"></div></div>
+      <div class="opt"><h4>메뉴 설명</h4><p id="sBody"></p></div>
+      <div class="opt"><h4>들어간 재료 <small>필수</small></h4><ul id="sPoints"></ul><p class="note" id="sNote"></p></div>
+    </div>
+    <div class="foot">
+      <a class="btn line" id="sLink" target="_blank" rel="noopener"></a>
+      <button class="btn fill" id="sAdd"></button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const INK = '#4a2c3a';
+const S = (d) => `stroke="${INK}" stroke-width="${d||3}" stroke-linejoin="round"`;
+
+/* ------------ art ------------ */
+const ART = {
+  canvas: `<svg viewBox="0 0 160 190" width="160" height="190">
+    <path d="M40 150l-16 38M120 150l16 38M80 150v38" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
+    <rect x="14" y="8" width="132" height="146" rx="8" fill="#e7b288" ${S(4)}/>
+    <rect x="24" y="18" width="112" height="126" rx="4" fill="#fffaf3"/>
+    <circle cx="80" cy="72" r="38" fill="#ffe2cf" ${S(3)}/>
+    <path d="M42 66q2-36 38-36t38 36q-14-14-38-12t-38 12z" fill="#3b2530" ${S(2.5)}/>
+    <ellipse cx="66" cy="74" rx="9" ry="11" fill="#fff" ${S(2.5)}/><ellipse cx="94" cy="74" rx="9" ry="11" fill="#fff" ${S(2.5)}/>
+    <circle cx="68" cy="76" r="4.5" fill="#3b2530"/><circle cx="96" cy="76" r="4.5" fill="#3b2530"/>
+    <path d="M66 94q14 14 28 0" fill="#ff8fab" ${S(2.5)}/>
+    <ellipse cx="52" cy="90" rx="6" ry="3.5" fill="#ff9ebb"/><ellipse cx="108" cy="90" rx="6" ry="3.5" fill="#ff9ebb"/>
+    <rect x="44" y="118" width="72" height="18" rx="9" fill="#5ec8f2" ${S(2)}/>
+    <text x="80" y="131" text-anchor="middle" font-family="Jua" font-size="11" fill="${INK}">StyleGAN ✦</text>
+  </svg>`,
+  swot: `<svg viewBox="0 0 160 160" width="160" height="160">
+    <rect x="8" y="8" width="144" height="144" rx="12" fill="#fff" ${S(4)}/>
+    <text x="80" y="32" text-anchor="middle" font-family="Jua" font-size="15" fill="${INK}">EMOTION++</text>
+    <g font-family="Jua" font-size="22" text-anchor="middle" fill="${INK}">
+      <rect x="20" y="42" width="58" height="48" rx="6" fill="#bff0e0" ${S(2.5)}/><text x="49" y="74">S</text>
+      <rect x="82" y="42" width="58" height="48" rx="6" fill="#ffd6e4" ${S(2.5)}/><text x="111" y="74">W</text>
+      <rect x="20" y="94" width="58" height="48" rx="6" fill="#cfe9ff" ${S(2.5)}/><text x="49" y="126">O</text>
+      <rect x="82" y="94" width="58" height="48" rx="6" fill="#fff1a8" ${S(2.5)}/><text x="111" y="126">T</text>
+    </g>
+    <circle cx="140" cy="20" r="14" fill="#e58fe0" ${S(2.5)}/><text x="140" y="26" text-anchor="middle" font-family="Jua" font-size="16" fill="#fff">✓</text>
+  </svg>`,
+  desk: `<svg viewBox="0 0 230 220" width="230" height="220">
+    <rect x="22" y="148" width="13" height="70" rx="4" fill="#e7b288" ${S()}/>
+    <rect x="195" y="148" width="13" height="70" rx="4" fill="#e7b288" ${S()}/>
+    <rect x="138" y="150" width="62" height="54" rx="6" fill="#f6c9a0" ${S()}/>
+    <rect x="160" y="170" width="18" height="6" rx="3" fill="${INK}"/>
+    <rect x="8" y="134" width="214" height="18" rx="7" fill="#f6c9a0" ${S()}/>
+    <rect x="102" y="110" width="26" height="26" fill="#d9d2e6" ${S()}/>
+    <rect x="84" y="126" width="62" height="10" rx="5" fill="#d9d2e6" ${S()}/>
+    <rect x="36" y="8" width="158" height="108" rx="12" fill="#fff" ${S(4)}/>
+    <rect x="47" y="19" width="136" height="84" rx="5" fill="#2d2140"/>
+    <path d="M62 64v-18a12 12 0 0 1 24 0v18l-4-4-4 4-4-4-4 4-4-4z" fill="#fff"/>
+    <circle cx="70" cy="47" r="2.5" fill="#2d2140"/><circle cx="78" cy="47" r="2.5" fill="#2d2140"/>
+    <text x="96" y="45" font-family="Jua" font-size="15" fill="#ffd6e4">GhostINK</text>
+    <text x="96" y="62" font-family="Jua" font-size="10" fill="#9fe7c8">AWS → Azure</text>
+    <rect x="56" y="76" width="118" height="18" rx="9" fill="#b69cff"/>
+    <text x="115" y="89" text-anchor="middle" font-family="Jua" font-size="10" fill="#2d2140">설계 의도 보존 ✓ MCP</text>
+    <rect x="176" y="108" width="22" height="26" rx="5" fill="#ea002c" ${S()}/>
+    <path d="M198 114q10 0 8 10q-2 6-8 5" fill="none" ${S()}/>
+    <path d="M180 100q4-8 0-14M190 100q4-8 0-14" stroke="#c9b6c0" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>`,
+  rack: (() => {
+    let u = '';
+    for (let i = 0; i < 6; i++) {
+      const y = 30 + i * 35;
+      u += `<rect x="20" y="${y}" width="90" height="27" rx="4" fill="#4a3d6e" ${S(2.5)}/>
+        <circle class="led" cx="32" cy="${y+13.5}" r="4" fill="#5cf2a9"/>
+        <circle class="led d${1+i%3}" cx="45" cy="${y+13.5}" r="4" fill="${i%2?'#ffcf3f':'#5cf2a9'}"/>
+        <path d="M60 ${y+9}h40M60 ${y+14}h40M60 ${y+19}h40" stroke="#6f62a0" stroke-width="2.5"/>`;
+    }
+    return `<svg viewBox="0 0 130 270" width="130" height="270">
+      <rect x="10" y="10" width="110" height="252" rx="10" fill="#6b5b95" ${S(4)}/>
+      <path d="M30 20h70" stroke="#8b7cc0" stroke-width="3" stroke-linecap="round"/>
+      ${u}
+      <rect x="26" y="238" width="78" height="18" rx="5" fill="#ffd6e4" ${S(2.5)}/>
+      <text x="65" y="251" text-anchor="middle" font-family="Jua" font-size="11" fill="${INK}">HOMELAB ♥</text>
+    </svg>`;
+  })(),
+  tv: `<svg viewBox="0 0 180 214" width="180" height="214">
+    <path d="M70 20l-18-18M110 20l18-18" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+    <rect x="12" y="18" width="156" height="118" rx="14" fill="#3b2530" ${S(4)}/>
+    <rect x="23" y="29" width="134" height="96" rx="7" fill="#10231e"/>
+    <text x="30" y="44" font-family="Jua" font-size="10" fill="#9ff">STOCK BRIDGE · LIVE</text>
+    <g fill="#3ccf91"><rect x="34" y="84" width="6" height="18"/><rect x="50" y="76" width="6" height="16"/><rect x="82" y="66" width="6" height="18"/><rect x="114" y="54" width="6" height="16"/></g>
+    <g fill="#ff6b8b"><rect x="66" y="80" width="6" height="12"/><rect x="98" y="70" width="6" height="12"/></g>
+    <polyline class="chartline" points="30,100 50,88 66,92 84,74 100,80 118,58 150,48" fill="none" stroke="#5cf2a9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="23" y="108" width="134" height="17" fill="#1f3b33"/>
+    <text x="90" y="120" text-anchor="middle" font-family="Jua" font-size="10" fill="#ffd166">▲ 랭킹 쿼리 1,500ms → 4ms</text>
+    <rect x="80" y="136" width="20" height="12" fill="#d9d2e6" ${S()}/>
+    <rect x="10" y="148" width="160" height="56" rx="9" fill="#bff0e0" ${S(3.5)}/>
+    <path d="M90 152v48" stroke="${INK}" stroke-width="3"/>
+    <circle cx="80" cy="176" r="4" fill="${INK}"/><circle cx="100" cy="176" r="4" fill="${INK}"/>
+    <rect x="22" y="202" width="10" height="10" fill="${INK}"/><rect x="148" y="202" width="10" height="10" fill="${INK}"/>
+  </svg>`,
+  frame: `<svg viewBox="0 0 196 146" width="196" height="146">
+    <path d="M98 -26L40 8M98 -26L156 8" stroke="${INK}" stroke-width="2"/><circle cx="98" cy="-26" r="5" fill="#ffcf3f" ${S(2)}/>
+    <rect x="4" y="6" width="188" height="136" rx="10" fill="#e3a36f" ${S(4)}/>
+    <rect x="16" y="18" width="164" height="112" rx="4" fill="#1b1830"/>
+    <text x="24" y="34" font-family="Jua" font-size="11" fill="#ff9ec0">Nebula · Grafana</text>
+    <path d="M34 98a26 26 0 0 1 52 0" fill="none" stroke="#3a3558" stroke-width="9" stroke-linecap="round"/>
+    <path d="M34 98a26 26 0 0 1 36-24" fill="none" stroke="#f47725" stroke-width="9" stroke-linecap="round"/>
+    <text x="60" y="100" text-anchor="middle" font-family="Jua" font-size="15" fill="#fff">-40%</text>
+    <text x="60" y="118" text-anchor="middle" font-family="Jua" font-size="9" fill="#9a93c7">운영 비용</text>
+    <g fill="#7ad3ff"><rect x="104" y="92" width="10" height="24"/><rect x="118" y="76" width="10" height="40"/><rect x="132" y="84" width="10" height="32"/><rect x="146" y="64" width="10" height="52"/><rect x="160" y="70" width="10" height="46"/></g>
+    <path d="M104 52h66" stroke="#3a3558" stroke-width="2" stroke-dasharray="4 4"/>
+    <text x="104" y="48" font-family="Jua" font-size="9" fill="#5cf2a9">SLO ✓</text>
+  </svg>`,
+  blocks: `<svg viewBox="0 0 136 130" width="136" height="130">
+    <ellipse cx="68" cy="124" rx="60" ry="6" fill="${INK}" opacity=".12"/>
+    <g font-family="Jua" text-anchor="middle" font-size="15" fill="${INK}">
+      <rect x="14" y="4" width="0" height="0"/>
+      <rect x="18" y="66" width="10" height="8" rx="2" fill="#ffd166" ${S(2.5)}/><rect x="42" y="66" width="10" height="8" rx="2" fill="#ffd166" ${S(2.5)}/>
+      <rect x="10" y="74" width="52" height="48" rx="7" fill="#ffd166" ${S()}/><text x="36" y="104">TF</text>
+      <rect x="84" y="66" width="10" height="8" rx="2" fill="#7ad3ff" ${S(2.5)}/><rect x="108" y="66" width="10" height="8" rx="2" fill="#7ad3ff" ${S(2.5)}/>
+      <rect x="74" y="74" width="52" height="48" rx="7" fill="#7ad3ff" ${S()}/><text x="100" y="104">K8s</text>
+      <rect x="48" y="24" width="10" height="8" rx="2" fill="#ff8fab" ${S(2.5)}/><rect x="78" y="24" width="10" height="8" rx="2" fill="#ff8fab" ${S(2.5)}/>
+      <rect x="36" y="32" width="64" height="44" rx="7" fill="#ff8fab" ${S()}/><text x="68" y="60">IaC</text>
+      <rect x="54" y="0" width="28" height="32" rx="6" fill="#bff0e0" ${S()}/><text x="68" y="22" font-size="14">✓</text>
+    </g>
+  </svg>`,
+  board: `<svg viewBox="0 0 150 236" width="150" height="236">
+    <path d="M30 150l-18 84M120 150l18 84M75 150v84" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
+    <path d="M30 150l-18 84M120 150l18 84M75 150v84" stroke="#e7b288" stroke-width="2" stroke-linecap="round"/>
+    <rect x="6" y="6" width="138" height="150" rx="10" fill="#e7b288" ${S(4)}/>
+    <rect x="14" y="14" width="122" height="134" rx="5" fill="#fff"/>
+    <text x="24" y="32" font-family="Jua" font-size="12" fill="${INK}">회의 노트 ✎</text>
+    <g transform="rotate(-4 44 64)"><rect x="20" y="42" width="52" height="40" rx="3" fill="#fff1a8" ${S(2)}/>
+      <text x="46" y="58" text-anchor="middle" font-family="Jua" font-size="10" fill="${INK}">지금</text><text x="46" y="72" text-anchor="middle" font-family="Jua" font-size="10" fill="${INK}">지킬 것</text></g>
+    <g transform="rotate(3 104 64)"><rect x="80" y="42" width="52" height="40" rx="3" fill="#ffd6e4" ${S(2)}/>
+      <text x="106" y="58" text-anchor="middle" font-family="Jua" font-size="10" fill="${INK}">뒤로</text><text x="106" y="72" text-anchor="middle" font-family="Jua" font-size="10" fill="${INK}">미룰 것</text></g>
+    <path d="M46 88q30 26 60 0" fill="none" stroke="#139a95" stroke-width="2.5" stroke-dasharray="4 4"/>
+    <rect x="44" y="102" width="62" height="30" rx="3" fill="#bff0e0" ${S(2)}/>
+    <text x="75" y="122" text-anchor="middle" font-family="Jua" font-size="12" fill="${INK}">합의 ✓</text>
+    <rect x="10" y="152" width="130" height="8" rx="3" fill="#e7b288" ${S(2.5)}/>
+    <rect x="96" y="146" width="20" height="5" rx="2" fill="#2ac1bc" stroke="${INK}" stroke-width="1.5"/>
+  </svg>`,
+};
+
+
+const ITEMS = [
+  { id:'ghost', art:'desk', x:290, y:470, w:230, spot:[300,512], z:470, color:'#b69cff', label:'반짝이는 모니터',
+    bar:'GhostINK.exe', tagNo:'핵심역량 01', tag:'분석 · AI & Data — AI 결과도 직접 확인',
+    title:'GhostINK', sub:'클라우드 설계 "철학"을 번역하는 AI Agent',
+    meta:'개인 프로젝트 · 2026.05 · 3일 만에 구축',
+    stats:[['70%↓','설계 시간'],['65%↓','리서치 리소스'],['80%↓','API 운영 비용']],
+    body:'AWS↔Azure 마이그레이션에서 서비스를 1:1로 바꿔 끼우는 대신, 원래 아키텍처의 설계 의도를 읽고 타깃 클라우드의 설계 원칙에 맞춰 다시 짜주는 AI Agent 플랫폼이에요.',
+    points:['MCP로 최신 클라우드 보안 기준과 벤더 공식 문서를 참조해 LLM의 지식 한계를 보완',
+            'AI가 낸 결과를 그대로 믿지 않았어요. AWS SA 멘토에게 검증 방식을 반복 자문해서 ① 원 설계 의도를 보존했는지 ② 현업에서 실제로 그렇게 설계하는지로 기준을 다시 세우고 체크리스트로 만들었어요',
+            '멘토링에서 "결과가 아니라 형식만 보고 있다"는 피드백을 받고, 평가 기준 자체를 처음부터 다시 정의'],
+    link:['ghost-ink.chelina.dev ↗','https://ghost-ink.chelina.dev/'] },
+  { id:'stock', art:'tv', x:765, y:474, w:180, spot:[760,528], z:474, color:'#3ccf91', label:'주식 전광판 TV',
+    bar:'StockBridge — LIVE', tagNo:'핵심역량 02', tag:'진단 · Problem Finding — 사실과 가설을 구분',
+    title:'Stock Bridge', sub:'장애가 나도 멈추지 않는 하이브리드 트레이딩 플랫폼',
+    meta:'2인 · Architect / PM / Backend / DevOps · 2026.04~ 운영·개선 중',
+    stats:[['1,500→4ms','랭킹 쿼리'],['5단계','시세 폴백 체인'],['4계층','네트워크 분리']],
+    body:'금융 보안 가이드라인 아래에서 실시간성·정합성·보안 요건을 동시에 만족해야 하는 조건으로 설계하고 구축했어요.',
+    points:['랭킹 쿼리가 1,500ms 걸렸을 때 "인덱스가 없어서"라고 단정하지 않았어요. 실운영 규모(2,700종목·67.5만 행)로 후보안을 모두 재 보니 검토하던 trigram 인덱스가 오히려 더 느려서 채택하지 않았어요',
+            '상태가 가끔 어긋나는 현상을 파고들어 원인이 파드 간 시계 차이라는 걸 확인하고, Redis 서버 시각을 기준으로 도는 분산 서킷브레이커로 해결',
+            '상위 데이터 소스가 끊겨도 서비스는 멈추지 않고 품질만 단계적으로 낮추는 5단계 폴백',
+            '증권사 WebSocket → Redis Streams → PostgreSQL 파이프라인은 컨슈머가 죽어도 유실·중복 없이 적재돼요',
+            'Site-to-Site VPN + SRX300 UTM으로 온프레미스↔AWS를 연결하고, Helm·ArgoCD로 배포 이력을 Git에서 추적'],
+    link:['stock-bridge.chelina.dev ↗','https://stock-bridge.chelina.dev'] },
+  { id:'board', art:'board', x:912, y:492, w:150, spot:[880,560], z:492, color:'#ffc93c', label:'회의 화이트보드',
+    bar:'meeting-notes.md', tagNo:'핵심역량 03', tag:'조율 · Communication — 함께 실행할 접점 찾기',
+    title:'AMZMALL', sub:'입장이 부딪힐 때, 지금 지킬 것과 뒤로 미룰 것을 나누기',
+    meta:'6인 · 백엔드 & 보안 담당 · 2024.01–03',
+    stats:[['30%↑','개발·협업 생산성'],['"다음에도 같이"','프로젝트 끝나고 자주 들은 말']],
+    body:'커머스 백엔드에서 인증 구조를 맡았어요. 기술 판단만큼 그 판단을 팀과 같이 실행하는 게 중요하다는 걸 배운 프로젝트예요.',
+    points:['개발 속도와 인증 안정성의 우선순위가 부딪혔을 때 필수 통제와 추후 개선 항목을 나눠 합의안 도출',
+            '인증이라는 고위험 영역을 직접 만들기보다 AWS Cognito 같은 관리형 서비스로 넘기는 선택의 근거를 팀에 설명',
+            '인증 흐름과 API 기준을 Swagger·다이어그램으로 그리고, Jira·Confluence에 의사결정 근거를 쌓아 같은 논의가 반복되지 않게'],
+    link:['시연 영상 ↗','https://www.youtube.com/watch?v=ycwmKWJfbv8'] },
+  { id:'rack', art:'rack', x:92, y:486, w:130, spot:[170,530], z:486, color:'#6b8cff', label:'폐서버 랙',
+    bar:'homelab — ssh', tagNo:'FDO 트랙', tag:'LEARN → APPLY → REVIEW — 운영하며 다시 고치기',
+    title:'Hybrid Homelab', sub:'폐서버로 만든 온프레미스 × AWS 테스트베드',
+    meta:'2인 · PM / Architect · 2025.05~ 1년 넘게 운영 중',
+    stats:[['1년+','직접 운영'],['100%','이미지 스캔 커버리지']],
+    body:'중고·폐서버에 Proxmox·Debian을 올리고 AWS와 연결했어요. 아키텍처 판단을 배포 전에 먼저 검증해 보는 테스트베드예요.',
+    points:['구축 한 달 뒤 "이 이미지는 어떤 검증을 거쳤지?"를 추적할 수 없게 되자, 자원을 목록이 아닌 수명주기로 재정의',
+            'Harbor + AWS ECR 연동으로 이미지 취약점 스캔을 배포 전 필수 단계로 구성',
+            '폐서버에 Gemini·OpenClaw 기반 업무 자동화 파이프라인을 올리고, 진행 상황을 보는 중앙 트래킹 플랫폼도 개발',
+            '데이터 접근 패턴을 분석해 S3 Lifecycle 정책으로 보관 비용 비효율 제거'],
+    link:['lucia.land ↗','https://www.lucia.land/'] },
+  { id:'nebula', art:'frame', x:660, y:214, w:196, spot:[650,480], z:5, color:'#ff8fab', label:'대시보드 액자',
+    bar:'Nebula Monitoring', tagNo:'FDO 키워드', tag:'#데이터 — 무엇을 볼지부터 고르기',
+    title:'Nebula Platform', sub:'더 붙이지 않고, 덜어내서 좋아진 인프라',
+    meta:'개인 프로젝트 · 2025.11–12',
+    stats:[['40%↓','운영 비용*'],['80%↑','프로세스 속도']],
+    body:'모니터링 도구를 추가하기 전에 운영 비용부터 봤어요. CPU·메모리가 아니라 서비스 가용성과 장애 대응에 직결되는 지표를 중심으로 Prometheus·Grafana를 다시 설계했어요.',
+    points:['서버·서비스·환경별 태그 체계를 정리하고 지표별 수집 주기·보존 범위·집계 수준을 분리',
+            '무제한 보관이 저장·조회 비용을 키운다고 판단해서 보존 정책을 재구성',
+            'Secrets Scanning·SBOM·Image Signing을 못 통과하면 배포가 멈춰요 — 보안을 담당자의 주의력이 아니라 파이프라인의 기본값으로'],
+    note:'* 실 청구액이 아니라 저장량·보존기간 기준으로 산정한 값이에요.',
+    link:['GitHub ↗','https://github.com/shashax42/Nebula-Platform'] },
+  { id:'blocks', art:'blocks', x:430, y:598, w:136, spot:[520,600], z:598, color:'#f47725', label:'IaC 블록 장난감',
+    bar:'terraform apply', tagNo:'핵심역량 04', tag:'실행 · Business Judgment — 개선을 운영에 정착',
+    title:'Cloud2Scape', sub:'사람마다 달랐던 구축을 코드 한 벌로',
+    meta:'4인 · 인프라 리드 / DevOps · 2024.11–12',
+    stats:[['4h→30m','세팅 시간 (92%↓)'],['60%↑','파트너 온보딩 속도']],
+    body:'팀원마다 결과와 소요 시간이 달랐을 때 숙련도 차이로 넘기지 않고 절차를 다시 뜯어봤어요.',
+    points:['Vagrant·Kubespray로 VM·네트워크·설치 순서를 표준화하고 Terraform IaC로 전환',
+            'multi-tier VPC와 Internal Subnet으로 DB·애플리케이션 워크로드를 공용 인터넷에서 분리',
+            'Ansible로 온프레미스↔클라우드 구성 정합성을 강제하고 반복 수작업을 코드로 대체'],
+    link:['GitHub ↗','https://github.com/cloud2scape'] },
+  { id:'capstone', art:'canvas', color:'#5ec8f2',
+    tagNo:'핵심역량 01', tag:'분석 · AI & Data — 모델보다 한계를 먼저 측정',
+    title:'Capstone Design', sub:'GAN 기반 개인 맞춤형 캐리커처 생성 플랫폼',
+    meta:'4인 · AI 개발 & 부리더 · 2023.01–06',
+    stats:[['26%↑','UX 만족도'],['4인','AI 개발 · 부리더']],
+    body:'OpenCV와 StyleGAN으로 사진을 맞춤형 캐리커처로 바꿔주는 플랫폼을 만들었어요. 모델을 키우는 대신, 정해진 하드웨어 안에서 어디까지가 한계인지부터 쟀어요.',
+    points:['OpenCV·StyleGAN 기반 엔드투엔드 파이프라인 설계',
+            '고정된 하드웨어 한계 안에서 하이퍼파라미터를 조정하며 성능 경계를 정량적으로 분석',
+            '모델 성능만이 아니라 추론 지연·자원 사용량·실패율까지 같이 봐야 한다는 관점의 출발점'],
+    link:['시연 영상 ↗','https://www.youtube.com/watch?v=KiYVv2efyYM'] },
+  { id:'emotion', art:'swot', color:'#e58fe0',
+    tagNo:'핵심역량 04', tag:'실행 · Business Judgment — 임팩트 큰 곳부터',
+    title:'EMOTION++', sub:'추상적인 요구를 데이터로 쪼개 기술 명세로',
+    meta:'5인 · 부팀장, Project Strategist · 2020.11',
+    stats:[['5인','부팀장 · 전략 담당'],['SWOT','정성 + 정량 분석']],
+    body:'비즈니스 요구사항을 분석하고 데이터를 근거로 무엇을 먼저 만들지 정한 프로젝트예요.',
+    points:['정성·정량 사용자 데이터와 SWOT 분석으로 추상적인 요구를 기술 명세로 번역',
+            '기술적 화려함보다 제한된 리소스에서 임팩트가 큰 지점에 집중하는 우선순위 기준을 수립',
+            '기술 도입의 당위성을 비즈니스 언어로 증명'],
+    link:['시연 영상 ↗','https://www.youtube.com/watch?v=5KDb9g8YK84'] },
+];
+
+
+const $ = (id) => document.getElementById(id);
+const SECTIONS = [
+  { key:'분석', title:'분석 · AI & Data', desc:'감보다 근거로, AI 결과도 직접 확인해요', ids:['ghost','capstone'] },
+  { key:'진단', title:'진단 · Problem Finding', desc:'현상을 바로 원인으로 단정하지 않아요', ids:['stock'] },
+  { key:'조율', title:'조율 · Communication', desc:'다른 입장 사이에서 함께 실행할 접점을 찾아요', ids:['board'] },
+  { key:'실행', title:'실행 · Business Judgment', desc:'고친 방식을 운영에 정착시키는 데까지', ids:['blocks','emotion'] },
+  { key:'사이드', title:'사이드', desc:'LEARN → APPLY → REVIEW, 그리고 #데이터', ids:['rack','nebula'] },
+];
+const HOT = { stock:'대표', ghost:'인기' };
+const PRICE = { ghost:['70%↓','설계 시간'], stock:['1,500→4ms','랭킹 쿼리'], board:['30%↑','협업 생산성'], blocks:['4h→30m','세팅 시간'], rack:['1년+','직접 운영'], nebula:['40%↓','운영 비용'], capstone:['26%↑','UX 만족도'], emotion:['요구→명세','SWOT 분석'] };
+const COMP = { ghost:'분석 · AI & Data', stock:'진단 · Problem Finding', board:'조율 · Communication', blocks:'실행 · Business Judgment', rack:'LEARN → APPLY → REVIEW', nebula:'#데이터', capstone:'분석 · AI & Data', emotion:'실행 · Business Judgment' };
+const byId = Object.fromEntries(ITEMS.map((it) => [it.id, it]));
+const bgOf = (c) => c + '26';
+const art = (it) => ART[it.art].replace(/ width="\d+" height="\d+"/, '');
+const cart = [];
+
+/* ---------- build menu ---------- */
+$('tabs').innerHTML = ['세트', ...SECTIONS.map((s) => s.key)].map((k, i) =>
+  `<button data-k="${k}" class="${i ? '' : 'on'}">${k}</button>`).join('');
+$('menu').innerHTML = SECTIONS.map((s) => `
+  <section class="sec" id="sec-${s.key}">
+    <h3>${s.title}</h3><p class="desc">${s.desc}</p>
+    ${s.ids.map((id) => itemRow(byId[id])).join('')}
+  </section>`).join('');
+function itemRow(it, small) {
+  const [p, u] = PRICE[it.id];
+  return `<button class="item" data-id="${it.id}">
+    <div class="txt">
+      <div class="nm">${it.title}${HOT[it.id] && !small ? ` <span class="badge${it.id === 'ghost' ? ' m' : ''}">${HOT[it.id]}</span>` : ''}</div>
+      <div class="ds">${it.sub}</div>
+      ${small ? '' : `<div class="pr">${p}<small>${u}</small></div>`}
+    </div>
+    <div class="thumb" style="background:${bgOf(it.color)}">${art(it)}<span class="incart">✓</span></div>
+  </button>`;
+}
+document.addEventListener('click', (e) => {
+  const row = e.target.closest('.item');
+  if (row) openSheet(byId[row.dataset.id]);
+  const tab = e.target.closest('.tabs button');
+  if (tab) $('sec-' + (tab.dataset.k === '세트' ? 'set' : tab.dataset.k)).scrollIntoView({ behavior:'smooth' });
+});
+
+/* ---------- top bar / tabs follow scroll ---------- */
+function onScroll() {
+  const store = $('v-store').classList.contains('on');
+  $('topbar').classList.toggle('solid', !store || scrollY > 150);
+  if (!store) return;
+  const keys = ['set', ...SECTIONS.map((s) => s.key)];
+  let cur = keys[0];
+  keys.forEach((k) => { if ($('sec-' + k).getBoundingClientRect().top < 140) cur = k; });
+  document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', (b.dataset.k === '세트' ? 'set' : b.dataset.k) === cur));
+}
+addEventListener('scroll', onScroll, { passive:true });
+
+/* ---------- sheet ---------- */
+let open = null;
+function openSheet(it) {
+  open = it;
+  $('sPic').style.background = bgOf(it.color);
+  $('sPic').innerHTML = `<button class="x" id="sClose" aria-label="닫기">×</button>` + art(it);
+  $('sClose').onclick = closeSheet;
+  $('sTag').textContent = 'FDO ' + it.tagNo + ' · ' + it.tag;
+  $('sTitle').textContent = it.title;
+  $('sSub').textContent = it.sub;
+  $('sMeta').textContent = it.meta;
+  $('sStats').innerHTML = it.stats.map(([a, b]) => `<div class="stat"><b>${a}</b><span>${b}</span></div>`).join('');
+  $('sBody').textContent = it.body;
+  $('sPoints').innerHTML = it.points.map((p) => `<li>${p}</li>`).join('');
+  $('sNote').textContent = it.note || '';
+  $('sLink').textContent = it.link[0]; $('sLink').href = it.link[1];
+  syncAdd();
+  $('dim').classList.add('on');
+  document.body.style.overflow = 'hidden';
+  $('sheet').scrollTop = 0;
+  $('sAdd').focus({ preventScroll:true });
+}
+function syncAdd() {
+  const inCart = cart.includes(open.id);
+  $('sAdd').textContent = inCart ? '담겨 있어요 ✓ (빼기)' : '장바구니에 담기';
+}
+function closeSheet() { $('dim').classList.remove('on'); document.body.style.overflow = ''; open = null; }
+$('dim').addEventListener('click', (e) => { if (e.target.id === 'dim') closeSheet(); });
+addEventListener('keydown', (e) => { if (e.key === 'Escape' && open) closeSheet(); });
+$('sAdd').onclick = () => {
+  const id = open.id, i = cart.indexOf(id);
+  if (i >= 0) { cart.splice(i, 1); toast('장바구니에서 뺐어요'); }
+  else { cart.push(id); toast(`${open.title} 담았어요 🛒`); }
+  syncCart(); closeSheet();
+};
+$('setBtn').onclick = () => {
+  ITEMS.forEach((it) => { if (!cart.includes(it.id)) cart.push(it.id); });
+  syncCart(); toast(`FDO 풀코스 세트 ${ITEMS.length}종을 담았어요 🍱`);
+};
+function syncCart() {
+  document.querySelectorAll('#menu .item').forEach((el) => el.classList.toggle('added', cart.includes(el.dataset.id)));
+  $('cartN').textContent = cart.length;
+  $('orderTxt').textContent = cart.length === ITEMS.length ? '풀코스 주문하기' : '주문하기';
+  $('cartbar').classList.toggle('show', cart.length > 0 && $('v-store').classList.contains('on'));
+  $('orderBtn').classList.remove('bump'); void $('orderBtn').offsetWidth; $('orderBtn').classList.add('bump');
+}
+let tt;
+function toast(msg) { $('toast').textContent = msg; $('toast').classList.add('on'); clearTimeout(tt); tt = setTimeout(() => $('toast').classList.remove('on'), 1600); }
+
+/* ---------- views ---------- */
+function show(v) {
+  document.querySelectorAll('.view').forEach((el) => el.classList.toggle('on', el.id === 'v-' + v));
+  $('backBtn').style.visibility = v === 'store' ? 'hidden' : 'visible';
+  $('topTitle').textContent = { store:'우리동네 문제해결', track:'배달 현황', done:'주문 내역' }[v];
+  $('cartbar').classList.toggle('show', v === 'store' && cart.length > 0);
+  scrollTo({ top:0, behavior:'instant' });
+  onScroll();
+}
+$('backBtn').onclick = () => { stopTrack(); show('store'); };
+$('againBtn').onclick = () => show('store');
+
+/* ---------- tracking ---------- */
+let timers = [], raf = 0;
+function stopTrack() { timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(raf); }
+$('orderBtn').onclick = () => {
+  if (!cart.length) return;
+  show('track');
+  const steps = [...$('steps').children];
+  const set = (n) => steps.forEach((li, i) => { li.className = i < n ? 'done' : i === n ? 'now' : ''; });
+  const route = $('route'), rider = $('rider'), L = route.getTotalLength();
+  const place = (t) => { const p = route.getPointAtLength(L * t); rider.setAttribute('transform', `translate(${p.x} ${p.y})`); };
+  place(0); set(0);
+  $('etaSub').textContent = '주문이 접수됐어요'; $('etaMain').textContent = '메뉴 ' + cart.length + '개 준비 중';
+  timers.push(setTimeout(() => { set(1); $('etaSub').textContent = '근거 확인 중'; $('etaMain').textContent = '원자료와 대조하는 중…'; }, 1100));
+  timers.push(setTimeout(() => {
+    set(2); $('etaSub').textContent = '배달 출발'; $('etaMain').textContent = '곧 도착해요';
+    const t0 = performance.now(), D = 2600;
+    const step = (now) => { const t = Math.min(1, (now - t0) / D); place(t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2); if (t < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  }, 2300));
+  timers.push(setTimeout(() => { set(4); $('etaMain').textContent = '도착했어요!'; }, 5000));
+  timers.push(setTimeout(finish, 5700));
+};
+$('skipTrack').onclick = () => { stopTrack(); finish(); };
+
+/* ---------- done ---------- */
+function finish() {
+  stopTrack();
+  const ordered = ITEMS.filter((it) => cart.includes(it.id));
+  $('doneCount').textContent = ordered.length;
+  $('orderNo').textContent = '주문번호 FDO-1-' + String(Math.floor(Math.random() * 900) + 100);
+  $('rlines').innerHTML = ordered.map((it) => {
+    const [p, u] = PRICE[it.id];
+    return `<div class="rl"><span>${it.title} × 1</span><span class="p">${p}</span><span class="c">${COMP[it.id]} · ${u}</span></div>`;
+  }).join('');
+  const rest = ITEMS.filter((it) => !cart.includes(it.id));
+  $('more').innerHTML = rest.length ? `<h4>이 메뉴도 함께 주문하면 좋아요</h4>${rest.map((it) => itemRow(it, true)).join('')}` : '';
+  show('done');
+}
+
+/* ---------- misc ---------- */
+async function share() {
+  const url = location.href.split('#')[0];
+  try {
+    if (navigator.share) await navigator.share({ title:'우리동네 문제해결', url });
+    else { await navigator.clipboard.writeText(url); toast('링크를 복사했어요'); }
+  } catch (_) {}
+}
+$('shareBtn').onclick = share; $('shareBtn2').onclick = share;
+$('heartBtn').onclick = () => {
+  const on = $('heartBtn').classList.toggle('on');
+  $('heartBtn').setAttribute('aria-pressed', on);
+  toast(on ? '찜했어요 ♥ 사장님이 기뻐해요' : '찜을 취소했어요');
+};
+$('setN').textContent = ITEMS.length;
+onScroll();
+</script>
+</body>
+</html>
